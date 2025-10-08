@@ -2,7 +2,7 @@ package main
 
 import (
 	"indexer/database"
-	pagerank "indexer/page_rank"
+	"indexer/page_rank"
 )
 
 func main() {

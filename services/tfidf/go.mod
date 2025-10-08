@@ -1,4 +1,4 @@
-module database
+module tfidf
 
 go 1.25.1
 
