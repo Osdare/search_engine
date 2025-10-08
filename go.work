@@ -1,0 +1,9 @@
+go 1.25.1
+
+use (
+	./libs/database
+	./libs/utils
+	./services/pageranker
+	./services/query_engine
+	./services/web_crawler
+)
