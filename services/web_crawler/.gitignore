@@ -1,0 +1,2 @@
+*.env
+parser/data.go
