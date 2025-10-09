@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
+	"log"
 	"math"
 	querytypes "query_engine/types"
 	"strconv"
@@ -112,21 +113,49 @@ func (db *DataBase) StreamIndices(batchSize int) error {
 	}
 
 	generateTfidf := func(indices []querytypes.WordIndex) error {
+		pipe := db.client.Pipeline()
 
+		docMagnitudeSums := make(map[string]float64)
 		for _, index := range indices {
+			idf := inverseDocumentFrequency(int(docsCount), len(index.Postings))
+
+			pipe.ZAdd(db.ctx, "idf", redis.Z{
+				Member: index.Word,
+				Score:  idf,
+			})
 
 			for _, posting := range index.Postings {
 				docLength, err := db.GetDocLength(posting.NormUrl)
 				if err != nil {
-					return err
+					return fmt.Errorf("failed to get doc length for %s: %w", posting.NormUrl, err)
 				}
 
-				score := Tfidf(posting.TermFrequency, int(docLength), int(docsCount), len(index.Postings))
-				err = db.client.Set(db.ctx, "tfidf:"+utils.HashUrl(posting.NormUrl), score, 0).Err()
-				if err != nil {
-					return err
-				}
+				tfidf := Tfidf(
+					posting.TermFrequency,
+					int(docLength),
+					int(docsCount),
+					len(index.Postings),
+				)
+
+				pipe.ZAdd(db.ctx, "tfidf:"+index.Word, redis.Z{
+					Member: posting.NormUrl,
+					Score:  tfidf,
+				})
+
+				docMagnitudeSums[posting.NormUrl] += tfidf * tfidf
 			}
+		}
+
+		for doc, sumSq := range docMagnitudeSums {
+			magnitude := math.Sqrt(sumSq)
+			pipe.ZAdd(db.ctx, "doc:magnitude", redis.Z{
+				Member: doc,
+				Score:  magnitude,
+			})
+		}
+
+		if _, err := pipe.Exec(db.ctx); err != nil {
+			return fmt.Errorf("failed to execute redis pipeline: %w", err)
 		}
 
 		return nil
@@ -134,6 +163,7 @@ func (db *DataBase) StreamIndices(batchSize int) error {
 
 	var cursor uint64
 	for {
+		log.Printf("Processing indices cursor: %d\n", cursor)
 		keys, nextCursor, err := db.client.Scan(db.ctx, cursor, "index:*", int64(batchSize)).Result()
 		if err != nil {
 			return fmt.Errorf("could not scan keys: %v", err)

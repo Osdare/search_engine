@@ -18,7 +18,7 @@ func TestGetUrlsFromQuery(t *testing.T) {
 		UrlReturnCount: 10,
 	}
 
-	result, err := GetUrlsFromQuery("ooga boogang the osu game", &db, config)
+	result, err := GetRelevantUrls("ooga boogang the osu game", &db, config)
 	if err != nil {
 		t.Error(err)
 	}
