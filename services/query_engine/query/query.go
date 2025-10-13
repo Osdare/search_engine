@@ -6,12 +6,7 @@ import (
 	"utils"
 )
 
-type QueryConfig struct {
-	IndexCount     int64
-	UrlReturnCount int
-}
-
-func GetRelevantUrls(query string, db *database.DataBase, qf QueryConfig) ([]string, error) {
+func GetRelevantUrls(query string, db *database.DataBase, UrlReturnCount int) ([]string, error) {
 	words := utils.NormalizeQuery(query)
 
 	candidateLinks, err := db.GetCandidateLinks(words, 100)
@@ -41,7 +36,7 @@ func GetRelevantUrls(query string, db *database.DataBase, qf QueryConfig) ([]str
 		return results[i].val > results[j].val
 	})
 
-	linksLength := min(len(results), qf.UrlReturnCount)
+	linksLength := min(len(results), UrlReturnCount)
 
 	links := make([]string, 0)
 	for i := range linksLength {

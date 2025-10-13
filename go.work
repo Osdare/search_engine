@@ -2,8 +2,10 @@ go 1.25.1
 
 use (
 	./libs/utils
+	./libs/database
 	./services/pageranker
 	./services/query_engine
 	./services/web_crawler
 	./services/tfidf
+	./services/image_indexer
 )

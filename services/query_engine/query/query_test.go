@@ -13,12 +13,7 @@ func TestGetUrlsFromQuery(t *testing.T) {
 		t.Errorf("could not connect to database %v", err)
 	}
 
-	config := QueryConfig{
-		IndexCount:     1000,
-		UrlReturnCount: 10,
-	}
-
-	result, err := GetRelevantUrls("ooga boogang the osu game", &db, config)
+	result, err := GetRelevantUrls("ooga boogang the osu game", &db, 10)
 	if err != nil {
 		t.Error(err)
 	}
