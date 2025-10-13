@@ -3,13 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/joho/godotenv"
 	"math/rand"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
+	"utils"
 	"web_crawler/crawler"
 	"web_crawler/database"
 )
@@ -18,12 +18,13 @@ import (
 func main() {
 	fmt.Println(":)")
 
-	//env
-	godotenv.Load("useragent.env")
-	fmt.Println(os.Getenv("USER_AGENT"))
+	redisHost := utils.GetEnv("REDIS_HOST", "localhost")
+	redisPort := utils.GetEnv("REDIS_PORT", "6379")
+	redisPassword := utils.GetEnv("REDIS_PASSWORD", "")
+	redisDB := utils.GetEnv("REDIS_DB", "0")
 
 	db := database.DataBase{}
-	db.Connect("localhost:6379", "0", "")
+	db.Connect(redisHost+":"+redisPort, redisDB, redisPassword)
 
 	//seed urls should be different urls preferably as many as the amount of crawler workers
 	seeds := []string{"https://en.wikipedia.org/wiki/Osu!", "https://osu.ppy.sh/", "https://www.wikihow.com/Play-osu!", "https://github.com/ppy/osu", "https://www.osu.edu/"}

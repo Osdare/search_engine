@@ -194,52 +194,62 @@ func downloadRobots(domainName string) ([]string, error) {
 }
 
 func robotsToDomain(domainName string, robotsLines []string) (types.Domain, error) {
-	domain := types.Domain{}
-	domain.Name = domainName
+    domain := types.Domain{Name: domainName}
+    allow := []string{}
+    disallow := []string{}
+    isInUser := false
+    userAgent := strings.ToLower(os.Getenv("USER_AGENT"))
 
-	allow := make([]string, 0)
-	disallow := make([]string, 0)
-	isInUser := false
-	for _, line := range robotsLines {
+    for _, raw := range robotsLines {
+        line := strings.TrimSpace(raw)
+        if line == "" || strings.HasPrefix(line, "#") {
+            continue
+        }
 
-		if strings.HasPrefix(line, "User-agent: *") {
-			isInUser = true
-		} else if isInUser &&
-			strings.HasPrefix(line, "User-agent") &&
-			len(allow) > 0 &&
-			len(disallow) > 0 {
-			break
-		}
+        lineLower := strings.ToLower(line)
 
-		if isInUser {
-			if strings.HasPrefix(line, "Allow") {
-				s := strings.TrimSpace(strings.Replace(line, "Allow: ", "", 1))
-				allow = append(allow, s)
+        if strings.HasPrefix(lineLower, "user-agent: *") ||
+            strings.HasPrefix(lineLower, "user-agent: "+userAgent) {
+            isInUser = true
+            continue
+        }
 
-			} else if strings.HasPrefix(line, "Disallow") {
-				s := strings.TrimSpace(strings.Replace(line, "Disallow: ", "", 1))
-				disallow = append(disallow, s)
+        if isInUser && strings.HasPrefix(lineLower, "user-agent:") {
+            break 
+        }
 
-			} else if strings.HasPrefix(strings.ToLower(line), "crawl-delay") {
+        if !isInUser {
+            continue
+        }
 
-				cd, err := strconv.ParseInt(strings.Split(line, " ")[1], 10, 64)
-				if err != nil {
-					return types.Domain{}, fmt.Errorf("could not convert line: %v to int %v", line, err)
-				}
+        switch {
+        case strings.HasPrefix(lineLower, "allow:"):
+            s := strings.TrimSpace(strings.TrimPrefix(line, "Allow:"))
+            allow = append(allow, s)
 
-				domain.CrawlDelay = cd
-			}
-		}
-	}
+        case strings.HasPrefix(lineLower, "disallow:"):
+            s := strings.TrimSpace(strings.TrimPrefix(line, "Disallow:"))
+            disallow = append(disallow, s)
 
-	domain.Allowed = allow
-	domain.Disallowed = disallow
-	domain.LastCrawled = time.Now().Unix()
+        case strings.HasPrefix(lineLower, "crawl-delay:"):
+            parts := strings.Fields(line)
+            if len(parts) > 1 {
+                cd, err := strconv.ParseInt(parts[1], 10, 64)
+                if err != nil {
+                    return types.Domain{}, fmt.Errorf("invalid crawl-delay in line %q: %v", line, err)
+                }
+                domain.CrawlDelay = cd
+            }
+        }
+    }
 
-	return domain, nil
+    domain.Allowed = allow
+    domain.Disallowed = disallow
+    domain.LastCrawled = time.Now().Unix()
+
+    return domain, nil
 }
 
-// rember the protocol :)))
 func GetRobotsFromDomain(domainName string) (types.Domain, error) {
 	u, err := url.Parse(domainName)
 	if err != nil {
