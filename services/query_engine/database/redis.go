@@ -162,31 +162,6 @@ func (db *DataBase) GetDocsCount() (int64, error) {
 	return count, nil
 }
 
-func (db *DataBase) GetImageTopX(word string, x int64) (types.ImageIndex, error) {
-	r, err := db.client.ZRevRangeWithScores(db.ctx, "imageindex:"+word, 0, x-1).Result()
-	if err != nil {
-		return types.ImageIndex{}, fmt.Errorf("could not get image %v from db %v", word, err)
-	}
-
-	ten := types.ImageIndex{
-		Word: word,
-	}
-
-	for _, z := range r {
-		normUrl, ok := z.Member.(string)
-		if !ok {
-			return types.ImageIndex{}, fmt.Errorf("expected string member but got %T", z.Member)
-		}
-
-		ten.Postings = append(ten.Postings, types.ImagePosting{
-			ImageUrl:      normUrl,
-			TermFrequency: int(z.Score),
-		})
-	}
-
-	return ten, nil
-}
-
 func (db *DataBase) GetDocLength(normUrl string) (int64, error) {
 	key := "document:" + utils.HashUrl(normUrl)
 	r, err := db.client.HGet(db.ctx, key, "length").Result()

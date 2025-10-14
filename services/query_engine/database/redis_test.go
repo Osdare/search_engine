@@ -31,6 +31,9 @@ func TestGetCandidateLinks(t *testing.T) {
 	words := []string{"osu"}	
 
 	candidateLinks, err := db.GetCandidateLinks(words, 100)
+	if err != nil {
+		t.Error(err)
+	}
 
 	fmt.Println(candidateLinks)
 }

@@ -12,7 +12,7 @@ RUN go mod download && go mod verify
 COPY services/web_crawler ./
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -mod=vendor -ldflags="-s -w" -o /crawler main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /crawler main.go
 
 FROM alpine:3.20
 
