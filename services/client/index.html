@@ -1,19 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <title>Search Client</title>
-    <link href="styles.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <title>Search Client</title>
+  <link href="styles.css" rel="stylesheet">
 </head>
 
 <body>
-    <form onsubmit="sendMessage(event)">
-        <input type="text" id="search" placeholder="" />
-        <button type="submit">search</button>
-    </form>
+  <form id="searchForm">
+    <input type="text" id="search" placeholder="Enter your query" required />
+    <select id="searchType">
+      <option value="links">Links</option>
+      <option value="images">Images</option>
+    </select>
+    <button type="submit">Search</button>
+  </form>
 
+  <div id="results"></div>
+
+  <script src="index.js"></script>
 </body>
-
 </html>
-<script src="index.js"></script>
