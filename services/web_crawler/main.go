@@ -24,7 +24,9 @@ func main() {
 	redisDB := utils.GetEnv("REDIS_DB", "0")
 
 	db := database.DataBase{}
-	db.Connect(redisHost+":"+redisPort, redisDB, redisPassword)
+	if err := db.Connect(redisHost+":"+redisPort, redisDB, redisPassword); err != nil {
+		panic(err)
+	}
 
 	//seed urls should be different urls preferably as many as the amount of crawler workers
 	seeds := []string{"https://en.wikipedia.org/wiki/Osu!", "https://osu.ppy.sh/", "https://www.wikihow.com/Play-osu!", "https://github.com/ppy/osu", "https://www.osu.edu/"}

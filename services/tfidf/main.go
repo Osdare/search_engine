@@ -2,16 +2,21 @@ package main
 
 import (
 	"tfidf/database"
+	"utils"
 )
 
 func main() {
-	db := database.DataBase{}	
-	err := db.Connect("localhost:6379", "0", "")
-	if err != nil {
+	redisHost := utils.GetEnv("REDIS_HOST", "localhost")
+	redisPort := utils.GetEnv("REDIS_PORT", "6379")
+	redisPassword := utils.GetEnv("REDIS_PASSWORD", "")
+	redisDB := utils.GetEnv("REDIS_DB", "0")
+
+	db := database.DataBase{}
+	if err := db.Connect(redisHost+":"+redisPort, redisDB, redisPassword); err != nil {
 		panic(err)
 	}
 
-	err = db.StreamIndices(1000)
+	err := db.StreamIndices(1000)
 	if err != nil {
 		panic(err)
 	}

@@ -6,22 +6,28 @@ import (
 	"net/http"
 	"query_engine/database"
 	"query_engine/query"
+	"utils"
 )
 
 const (
-	allowedOrigin = "http://127.0.0.1:5500"
+	allowedOrigin = "http://localhost:5500"
 	serverPort    = ":8080"
 )
 
 func main() {
-	db := &database.DataBase{}
-	if err := db.Connect("localhost:6379", "0", ""); err != nil {
-		log.Fatalf("failed to connect to Redis: %v", err)
+	redisHost := utils.GetEnv("REDIS_HOST", "localhost")
+	redisPort := utils.GetEnv("REDIS_PORT", "6379")
+	redisPassword := utils.GetEnv("REDIS_PASSWORD", "")
+	redisDB := utils.GetEnv("REDIS_DB", "0")
+
+	db := database.DataBase{}
+	if err := db.Connect(redisHost+":"+redisPort, redisDB, redisPassword); err != nil {
+		panic(err)
 	}
 	fmt.Println("Connected to Redis")
 
-	http.HandleFunc("/links", withCORS(makeHandler(db, query.GetRelevantUrls)))
-	http.HandleFunc("/images", withCORS(makeHandler(db, query.GetImages)))
+	http.HandleFunc("/links", withCORS(makeHandler(&db, query.GetRelevantUrls)))
+	http.HandleFunc("/images", withCORS(makeHandler(&db, query.GetImages)))
 
 	fmt.Printf("Server running at http://localhost%s\n", serverPort)
 	log.Fatal(http.ListenAndServe(serverPort, nil))

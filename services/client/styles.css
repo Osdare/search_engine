@@ -1,50 +1,37 @@
-/* === LORD OF THE RINGS: ANCIENT SCROLL THEME === */
-/* For the full effect, add this to your HTML's <head>:
-   <link rel="preconnect" href="https://fonts.googleapis.com">
-   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-   <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
-*/
-
 body {
-    /* A font that looks like it was written by a scribe. Georgia is a safe fallback. */
     font-family: 'MedievalSharp', Georgia, serif;
     
-    /* --- BACKGROUND IMAGE SETUP --- */
-    /* An aged map of Middle-earth serves as our backdrop */
     background-image: linear-gradient(rgba(131, 105, 61, 0.4), rgba(80, 60, 30, 0.6)), url('images/orb-ponderer.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    /* --- END BACKGROUND IMAGE SETUP --- */
 
-    color: #4a3d2b; /* Dark, faded ink color for text */
+    color: #4a3d2b; 
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 2rem;
     min-height: 100vh;
     margin: 0;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* A more subtle shadow for readability */
-    overflow-y: auto; /* Allow scrolling */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); 
+    overflow-y: auto; 
 }
 
-/* Main content container, styled like worn parchment */
 body > * {
-    background: rgba(241, 229, 199, 0.85); /* Semi-transparent parchment color */
-    border: 2px solid #8c6f3e; /* A bronze-like border */
-    border-radius: 3px; /* Slightly rounded corners for a softer feel */
+    background: rgba(241, 229, 199, 0.85); 
+    border: 2px solid #8c6f3e; 
+    border-radius: 3px; 
     padding: 2rem;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* A darker, more defined shadow */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); 
     max-width: 600px;
     width: 100%;
     box-sizing: border-box;
 }
 
-/* Headings fit for a king's decree */
 h2 {
-    color: #6b211a; /* A deep, rich red like rubrication ink */
-    font-size: 2.2rem; /* Larger and more impactful */
+    color: #6b211a; 
+    font-size: 2.2rem; 
     text-align: center;
     border-bottom: 2px solid #bca37c;
     padding-bottom: 0.5rem;
@@ -54,19 +41,17 @@ h2 {
     font-weight: bold;
 }
 
-/* Form for sending ravens or seeking counsel */
 form {
     display: flex;
     gap: 0.5rem;
     width: 100%;
 }
 
-/* Input fields, as if carved from ancient wood */
 #search {
     flex-grow: 1;
     padding: 0.75rem 1rem;
     border: 2px solid #a3855a;
-    background: rgba(210, 190, 150, 0.7); /* Lighter parchment inset */
+    background: rgba(210, 190, 150, 0.7);
     color: #4a3d2b;
     font-family: inherit;
     font-size: 1rem;
@@ -75,11 +60,10 @@ form {
 
 #search:focus {
     outline: none;
-    border-color: #c5a66a; /* A brighter gold on focus */
+    border-color: #c5a66a; 
     box-shadow: 0 0 8px #c5a66a;
 }
 
-/* Select dropdowns for choosing your path */
 select {
     appearance: none;
     background-color: rgba(210, 190, 150, 0.7);
@@ -93,10 +77,9 @@ select {
     box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Buttons forged in the fires of Mount Doom */
 button[type="submit"] {
-    background: #5a452a; /* Dark leather color */
-    color: #f1e5c7; /* Parchment-colored text */
+    background: #5a452a; 
+    color: #f1e5c7; 
     border: 2px solid #9c7a3c;
     font-family: inherit;
     padding: 0.75rem 1.5rem;
@@ -108,7 +91,7 @@ button[type="submit"] {
 
 button[type="submit"]:hover {
     background: #795d3a;
-    box-shadow: 0 0 15px #c5a66a; /* A magical glow */
+    box-shadow: 0 0 15px #c5a66a; 
     color: #fff;
 }
 
@@ -116,7 +99,6 @@ button[type="submit"]:active {
     transform: scale(0.98);
 }
 
-/* The Palantír's viewing area */
 #results {
     margin-top: 1.5rem !important;
     padding: 1.5rem;
@@ -130,7 +112,6 @@ button[type="submit"]:active {
     text-shadow: none;
 }
 
-/* Responsive layout for smaller screens (like a Hobbit's device) */
 @media (max-width: 480px) {
     form {
         flex-direction: column;

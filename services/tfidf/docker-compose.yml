@@ -1,0 +1,7 @@
+services:
+  query_engine:
+    build: 
+      context: ../..
+      dockerfile: services/tfidf/Dockerfile
+    env_file:
+      - .env
