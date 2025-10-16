@@ -48,7 +48,7 @@ func main() {
 		cancel()
 	}()
 
-	numWorkers := 2
+	numWorkers := 5
 	var wg sync.WaitGroup
 	wg.Add(numWorkers)
 

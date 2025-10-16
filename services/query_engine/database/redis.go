@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"math"
 	"query_engine/types"
@@ -38,29 +37,6 @@ func (db *DataBase) Connect(addr string, database string, password string) error
 	}
 
 	return nil
-}
-
-func (db *DataBase) GetTopXIndices(word string, x int64) (types.WordIndex, error) {
-	r, err := db.client.ZRevRangeWithScores(db.ctx, "index:"+word, 0, x-1).Result()
-	if err != nil {
-		return types.WordIndex{}, fmt.Errorf("could not retrieve indices for word %v from db %v", word, err)
-	}
-
-	ten := types.WordIndex{Word: word}
-
-	for _, z := range r {
-		normUrl, ok := z.Member.(string)
-		if !ok {
-			return types.WordIndex{}, fmt.Errorf("expected string member but got %T", z.Member)
-		}
-
-		ten.Postings = append(ten.Postings, types.Posting{
-			NormUrl:       normUrl,
-			TermFrequency: int(z.Score),
-		})
-	}
-
-	return ten, nil
 }
 
 func (db *DataBase) getIndex(prefix, word string) (types.Index, error) {
@@ -191,60 +167,6 @@ func (db *DataBase) GetPageRank(url string) (float64, error) {
 	}
 
 	return rank, nil
-}
-
-func (db *DataBase) AddSearch(searchItem types.SearchItem) error {
-	key := fmt.Sprintf("search:%s", utils.HashUrl(searchItem.NormalizedQuery))
-
-	data, err := json.Marshal(searchItem)
-	if err != nil {
-		return fmt.Errorf("marshal searchItem failed %v", err)
-	}
-
-	ttl := 24 * time.Hour
-	if err = db.client.Set(db.ctx, key, data, ttl).Err(); err != nil {
-		return fmt.Errorf("could not push %v to db %v", key, err)
-	}
-
-	listKey := "search:recent"
-	if err = db.client.LPush(db.ctx, listKey, key).Err(); err != nil {
-		return fmt.Errorf("could not push %v to %v %v", key, listKey, err)
-	}
-
-	var maxSize int64 = 1000
-	if err = db.client.LTrim(db.ctx, listKey, 0, maxSize-1).Err(); err != nil {
-		return fmt.Errorf("could not trim %v %v", listKey, err)
-	}
-
-	length, err := db.client.LLen(db.ctx, listKey).Result()
-	if err != nil {
-		return fmt.Errorf("could not get length of %v %v", listKey, err)
-	}
-
-	if length > maxSize {
-		oldKeys, _ := db.client.LRange(db.ctx, listKey, maxSize, -1).Result()
-		if len(oldKeys) > 0 {
-			db.client.LTrim(db.ctx, listKey, 0, maxSize-1)
-			db.client.Del(db.ctx, oldKeys...)
-		}
-	}
-
-	return nil
-}
-
-func (db *DataBase) GetSearch(normalizedQuery string) (types.SearchItem, error) {
-	key := fmt.Sprintf("search:%s", utils.HashUrl(normalizedQuery))
-	data, err := db.client.Get(db.ctx, key).Result()
-	if err == redis.Nil {
-		return types.SearchItem{}, nil
-	}
-
-	var searchItem types.SearchItem
-	if err = json.Unmarshal([]byte(data), &searchItem); err != nil {
-		return types.SearchItem{}, fmt.Errorf("could not unmarshal %v %v", data, err)
-	}
-
-	return searchItem, nil
 }
 
 func (db *DataBase) ComputeCosineSimilarity(words []string, linkScores map[string]float64) (map[string]float64, error) {

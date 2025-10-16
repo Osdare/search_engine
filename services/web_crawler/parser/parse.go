@@ -27,6 +27,11 @@ func ParseBody(normUrl string, body *html.Node) (title string, rawUrls []string,
 				word = strings.ToLower(word)
 				word = strings.TrimSpace(word)
 				word = utils.RemovePunctuation(word)
+
+				if len(word) < 3 {
+					continue
+				}
+
 				stem := porterstemmer.StemWithoutLowerCasing([]rune(word))
 
 				if len(stem) >= 2 &&
