@@ -1,5 +1,6 @@
 services:
   query_engine:
+    container_name: query-engine
     build: 
       context: ../..
       dockerfile: services/query_engine/Dockerfile
