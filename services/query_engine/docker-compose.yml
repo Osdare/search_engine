@@ -6,3 +6,5 @@ services:
       dockerfile: services/query_engine/Dockerfile
     env_file:
       - .env
+    ports:
+      - "8080:8080"
