@@ -1,4 +1,4 @@
-const serverAddress = 'https://orb.api.ax';
+const serverAddress = 'https://api.orb.ax';
 //const serverAddress = 'http://127.0.0.1:8080';
 const linksEndpoint = '/links';
 const imagesEndpoint = '/images';
