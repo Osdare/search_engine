@@ -1,23 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Orb</title>
-  <link href="styles.css" rel="stylesheet">
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Orb</title>
+    <link href="styles.css" rel="stylesheet" />
+  </head>
 
-<body>
-  <form id="searchForm">
-    <input type="text" id="search" placeholder="Ponder the Orb" required />
-    <select id="searchType">
-      <option value="links">Links</option>
-      <option value="images">Images</option>
-    </select>
-    <button type="submit">Conjure</button>
-  </form>
+  <body>
+    <form id="searchForm">
+      <input type="text" id="search" placeholder="Ponder the Orb" required />
+      <select id="searchType">
+        <option value="links">Links</option>
+        <option value="images">Images</option>
+      </select>
+      <button type="submit">Conjure</button>
+    </form>
 
-  <div id="results"></div>
+    <div id="results"></div>
 
-  <script src="index.js"></script>
-</body>
+    <footer>
+      <div class="footer-section">
+        <h3>The Project</h3>
+        <a
+          href="https://github.com/Osdare/search_engine"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span class="icon">🔗</span> search_engine repository
+        </a>
+      </div>
+      <div class="footer-section">
+        <h3>The Ponderer</h3>
+        <a
+          href="https://github.com/Osdare"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span class="icon">👤</span> Osdare on GitHub
+        </a>
+      </div>
+    </footer>
+
+    <script src="index.js"></script>
+  </body>
 </html>
